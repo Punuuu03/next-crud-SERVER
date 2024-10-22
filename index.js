@@ -9,21 +9,28 @@ const itemRoutes = require('./routes/itemRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(
+  cors({
+    origin: ["https://next-crud-client.vercel.app"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  })
+);
+
+app.use(express.json()); // Middleware to parse JSON
 
 // Routes
-app.use('/api', itemRoutes);
+app.use('/api', itemRoutes); // API routes
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('MongoDB connected');
-}).catch(err => {
-  console.error('MongoDB connection error:', err);
-});
+// MongoDB connection (Remove deprecated options)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit process if MongoDB fails to connect
+  });
 
 // Start the server
 const port = process.env.PORT || 5000;
