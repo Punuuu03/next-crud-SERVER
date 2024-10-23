@@ -11,18 +11,21 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ["https://next-crud-client.vercel.app"],
+    origin: ["http://localhost:3000", "https://next-crud-client.vercel.app"], // Allow localhost and Vercel client
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   })
 );
+
+// Enable preflight (OPTIONS) for all routes
+app.options('*', cors());
 
 app.use(express.json()); // Middleware to parse JSON
 
 // Routes
 app.use('/api', itemRoutes); // API routes
 
-// MongoDB connection (Remove deprecated options)
+// MongoDB connection (without deprecated options)
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
