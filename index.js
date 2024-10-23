@@ -9,16 +9,23 @@ const itemRoutes = require('./routes/itemRoutes');
 const app = express();
 
 // Middleware
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://next-crud-client.vercel.app"], // Allow localhost and Vercel client
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests from specific origins or any origin for testing purposes
+    const allowedOrigins = ["http://localhost:3000", "https://next-crud-client.vercel.app"];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Allow cookies/auth tokens
+}));
 
-// Enable preflight (OPTIONS) for all routes
+// Handle preflight (OPTIONS) requests
 app.options('*', cors());
+
 
 app.use(express.json()); // Middleware to parse JSON
 
